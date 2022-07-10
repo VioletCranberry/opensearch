@@ -1,0 +1,26 @@
+{
+    "index_patterns":[
+        "logstash-*"
+    ],
+    "template":{
+        "settings":{
+            "index.number_of_replicas": 1,
+            "index.refresh_interval": "30s",
+            "index.mapping.total_fields.limit": "2000",
+            "index.codec": "best_compression"
+        },
+        "mappings":{
+            "dynamic_templates":[
+                {
+                    "do_not_process":{
+                        "match_mapping_type": "object",
+                        "match": "*",
+                        "mapping":{
+                            "enabled": false
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}

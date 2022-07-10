@@ -1,0 +1,7 @@
+node-configurator:
+
+  jobName: opensearch-configurator
+  secretName: opensearch-configurator-secret
+  include_config_files:
+    - index_template
+    - ism_policy

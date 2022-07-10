@@ -1,0 +1,31 @@
+_meta:
+  type: "internalusers"
+  config_version: 2
+
+admin:
+  {{- $password := "change_me!" }}
+  hash: {{ $password | fetchSecretValue | htpasswd "dummy" | trimPrefix "dummy:" | quote }}
+  reserved: true
+  description: "Admin user"
+  backend_roles:
+  - "admin"
+
+kibanaserver:
+  {{- $password := "change_me!" }}
+  hash: {{ $password | fetchSecretValue | htpasswd "dummy" | trimPrefix "dummy:" | quote }}
+  description: "Kibanaserver user"
+  reserved: true
+
+logstash:
+  {{- $password := "change_me!" }}
+  hash: {{ $password | fetchSecretValue | htpasswd "dummy" | trimPrefix "dummy:" | quote }}
+  description: "Logstash user"
+  reserved: false
+  backend_roles:
+  - "logstash"
+
+kibana_read_all:
+  {{- $password := .Values.opensearch.password }}
+  hash: {{ $password | fetchSecretValue | htpasswd "dummy" | trimPrefix "dummy:" | quote }}
+  description: "Read all user"
+  reserved: false

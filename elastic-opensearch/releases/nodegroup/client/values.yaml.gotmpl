@@ -1,0 +1,21 @@
+{{ pluck "nodegroup-client" .Values | first | toYaml }}
+
+masterService: {{ .Values.opensearch_cluster.name }}-{{ index .Values "nodegroup-master" "nodeGroup" }}
+
+securityConfig:
+  {{- tpl (readFile "../../nodegroup-security-config/templates/securityConfig.tpl") . | nindent 2 }}
+secretMounts:
+  {{- tpl (readFile "../../nodegroup-tls/templates/secrets_mount.tpl") . | nindent 2 }}
+config:
+  log4j2.properties: |
+    {{- tpl (readFile "../../../config/log4j2.properties.tpl") . | toString | nindent 4 }}
+  opensearch.yml: |
+    {{- tpl (readFile "../../../config/opensearch.tpl") . | nindent 4 }}
+    node.roles: []
+
+extraEnvs:
+  - name: DISABLE_INSTALL_DEMO_CONFIG
+    value: "true"
+
+extraObjects:
+  {{- tpl (readFile "./templates/ingress.tpl") . | nindent 2 }}

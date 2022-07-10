@@ -1,0 +1,90 @@
+opensearch_cluster:
+  name: &common_cluster_name elastic-opensearch
+  node:
+    opensearchJavaOpts: &opensearchJavaOpts "-Xmx4G -Xms4G"
+    persistence: &common_persistence_template
+      enabled: true
+      storageClass: "my-storage-class"
+      storageClassName: "my-storage-class"
+      accessModes:
+        - "ReadWriteOnce"
+      size: ""
+    resources: &common_node_resources
+      requests:
+        cpu: "2000m"
+        memory: "8Gi"
+      limits:
+        cpu: "2000m"
+        memory: "8Gi"
+    nodeAffinity: &common_node_affinity
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: nodegroup
+                operator: In
+                values:
+                  - opensearch
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 1
+          preference:
+            matchExpressions:
+              - key: nodegroup
+                operator: In
+                values:
+                  - opensearch
+    tolerations: &common_node_tolerations
+      - key: nodegroup
+        value: opensearch
+        effect: NoSchedule
+
+# per-release values
+
+nodegroup-master:
+  opensearchJavaOpts: *opensearchJavaOpts
+  nodeGroup: "master"
+  clusterName: *common_cluster_name
+  replicas: 3
+  roles:
+    - master
+  resources:
+    <<: *common_node_resources
+  persistence:
+    <<: *common_persistence_template
+    size: "20Gi"
+  nodeAffinity:
+    <<: *common_node_affinity
+  tolerations:
+    *common_node_tolerations
+
+nodegroup-data:
+  opensearchJavaOpts: *opensearchJavaOpts
+  nodeGroup: "data"
+  clusterName: *common_cluster_name
+  replicas: 2
+  roles:
+    - data
+  resources:
+    <<: *common_node_resources
+  persistence:
+    <<: *common_persistence_template
+    size: "100Gi"
+  nodeAffinity:
+    <<: *common_node_affinity
+  tolerations:
+    *common_node_tolerations
+
+nodegroup-client:
+  opensearchJavaOpts: *opensearchJavaOpts
+  nodeGroup: "client"
+  clusterName: *common_cluster_name
+  replicas: 2
+  roles: []
+  resources:
+    <<: *common_node_resources
+  persistence:
+    <<: *common_persistence_template
+    size: "20Gi"
+  nodeAffinity:
+    <<: *common_node_affinity
+  tolerations:
+    *common_node_tolerations

@@ -1,0 +1,73 @@
+{{ readFile "./elastic-opensearch/helmfile-templates/releases.yaml" }}
+
+environments:
+  default:
+    missingFileHandler: Error
+    values:
+      - ./elastic-opensearch/values/node-common.yaml
+      - ./elastic-opensearch/values/node-tls.yaml
+      - ./elastic-opensearch/values/node-security-config.yaml
+      - ./elastic-opensearch/values/node-configurator.yaml
+      - common:
+          domain: ""
+          issuer: ""
+          target: ""
+      - oidc:
+          client_id: ""
+          client_secret: ""
+          tenant_id: ""
+          ad_group_ids:
+            group_1_example: "" 
+            group_2_example: "" 
+      - openid:
+          url: ""
+      - opensearch:
+          password: ""
+
+helmDefaults:
+  wait: true
+
+repositories:
+  - name: opensearch
+    url: https://opensearch-project.github.io/helm-charts/
+  - name: incubator
+    url: https://charts.helm.sh/incubator
+
+releases:
+
+  - <<: *opensearch-nodegroup
+    name: master
+    needs:
+      - es-opensearch/nodegroup-security-config
+      - es-opensearch/nodegroup-tls
+      - es-opensearch/configurator
+
+  - <<: *opensearch-nodegroup
+    name: data
+    needs:
+      - es-opensearch/nodegroup-security-config
+      - es-opensearch/nodegroup-tls
+      - es-opensearch/configurator
+
+  - <<: *opensearch-nodegroup
+    name: client
+    needs:
+      - es-opensearch/nodegroup-security-config
+      - es-opensearch/nodegroup-tls
+      - es-opensearch/configurator
+
+  - <<: *opensearch-dashboards
+    name: dashboards
+    needs:
+      - es-opensearch/master
+      - es-opensearch/data
+      - es-opensearch/client
+
+  - <<: *opensearch-requirements
+    name: nodegroup-security-config
+
+  - <<: *opensearch-requirements
+    name: nodegroup-tls
+
+  - <<: *opensearch-requirements
+    name: configurator

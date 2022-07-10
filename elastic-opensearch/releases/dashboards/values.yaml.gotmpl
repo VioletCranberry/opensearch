@@ -1,0 +1,27 @@
+opensearchHosts: "https://{{ .Values.opensearch_cluster.name }}-{{ index .Values "nodegroup-client" "nodeGroup" }}:9200"
+
+replicaCount: 2
+
+config:
+  opensearch_dashboards.yml:
+    {{- tpl (readFile "../../config/dashboards.tpl") . | nindent 4 }}
+
+affinity:
+  nodeAffinity:
+    {{- .Values.opensearch_cluster.node.nodeAffinity | toYaml | nindent 4 }}
+
+tolerations:
+  {{- .Values.opensearch_cluster.node.tolerations | toYaml | nindent 2 }}
+
+resources:
+  {{- .Values.opensearch_cluster.node.resources | toYaml | nindent 2 }}
+
+secretMounts:
+  {{- tpl (readFile "./templates/secrets.tpl") . | nindent 2 }}
+
+ingress:
+  {{- tpl (readFile "./templates/ingress.tpl") . | nindent 2 }}
+
+extraEnvs:
+  - name: DISABLE_INSTALL_DEMO_CONFIG
+    value: "true"

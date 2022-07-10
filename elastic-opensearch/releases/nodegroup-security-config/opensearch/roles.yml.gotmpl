@@ -1,0 +1,20 @@
+_meta:
+  type: "roles"
+  config_version: 2
+
+kibana_read_only:
+  reserved: false
+  hidden: false
+  cluster_permissions:
+  - "cluster_composite_ops_ro"
+  index_permissions:
+  - index_patterns:
+    - "logstash-*"
+    allowed_actions:
+    - "read"
+  tenant_permissions:
+  - tenant_patterns:
+    - "*"
+    allowed_actions:
+    - "kibana_all_read"
+  static: false

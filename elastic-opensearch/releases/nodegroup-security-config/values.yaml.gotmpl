@@ -1,0 +1,2 @@
+resources:
+  {{- tpl (readFile "./templates/secrets.tpl") . | nindent 2 }}

@@ -1,0 +1,9 @@
+node-security-config:
+
+  include_config_files:
+    - action_groups
+    - config
+    - internal_users
+    - roles_mapping
+    - roles
+    - tenants

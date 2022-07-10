@@ -1,0 +1,57 @@
+node-tls-resources:
+
+  certificate_common:
+    api_version: &api_version cert-manager.io/v1
+    private_key_opts: &private_key_opts
+      algorithm: RSA
+      encoding: PKCS8
+    issuer_opts: &issuer_opts
+      name: internal-ca-issuer
+      kind: ClusterIssuer
+
+# per-release values
+
+node-tls:
+  resources:
+
+    - apiVersion: *api_version
+      kind: Certificate
+      metadata:
+        name: &name opensearch-transport
+      spec:
+        privateKey:
+          <<: *private_key_opts
+        issuerRef:
+          <<: *issuer_opts
+        secretName: opensearch-transport-tls
+        commonName: *name
+        dnsNames:
+          - *name
+
+    - apiVersion: *api_version
+      kind: Certificate
+      metadata:
+        name: &name opensearch-admin
+      spec:
+        privateKey:
+          <<: *private_key_opts
+        issuerRef:
+          <<: *issuer_opts
+        secretName: opensearch-admin-tls
+        commonName: *name
+        dnsNames:
+          - *name
+
+    - apiVersion: *api_version
+      kind: Certificate
+      metadata:
+        name: &name opensearch-http
+      spec:
+        privateKey:
+          <<: *private_key_opts
+        issuerRef:
+          <<: *issuer_opts
+        secretName: opensearch-http-tls
+        commonName: *name
+        dnsNames:
+          - *name
